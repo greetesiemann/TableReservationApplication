@@ -1,10 +1,46 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org" lang="et">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Broneering kinnitatud - Restoran Puri</title>
+    <style>
+        body { font-family: sans-serif; background-color: #f4f1fa; display: flex; justify-content: center; padding-top: 100px; }
+        .success-card {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            max-width: 400px;
+        }
+        .checkmark { color: #7157C7; font-size: 50px; margin-bottom: 20px; }
+        h1 { color: #4a3b8d; }
+        .info { background: #D2C9ED; padding: 15px; border-radius: 8px; margin: 20px 0; color: #4a3b8d; }
+        .btn-home {
+            display: inline-block;
+            background: #7157C7;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+    </style>
 </head>
 <body>
+
+<div class="success-card">
+    <div class="checkmark">✔</div>
+    <h1>Broneering kinnitatud!</h1>
+    <p>Ootame teid restorani Puri.</p>
+
+    <div class="info">
+        <p th:text="'Valitud laud: nr ' + ${table.tableNumber}"></p>
+        <p th:text="'Kohti: ' + ${table.places}"></p>
+        <p>Aeg: <span th:text="${#temporals.format(dateTime, 'dd.MM.yyyy HH:mm')}"></span></p>
+    </div>
+
+    <a href="/" class="btn-home">Tagasi avalehele</a>
+</div>
 
 </body>
 </html>
