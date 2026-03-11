@@ -2,45 +2,116 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="et">
 <head>
     <meta charset="UTF-8">
-    <title>Broneering kinnitatud - Restoran Puri</title>
+    <title>Broneering kinnitatud – Restoran Puri</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
     <style>
-        body { font-family: sans-serif; background-color: #f4f1fa; display: flex; justify-content: center; padding-top: 100px; }
-        .success-card {
-            background: white;
-            padding: 40px;
-            border-radius: 15px;
-            text-align: center;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            max-width: 400px;
+        :root {
+            --ink:   #1a1410;
+            --gold:  #c9a84c;
+            --cream: #faf7f2;
+            --muted: #8c7b6b;
         }
-        .checkmark { color: #7157C7; font-size: 50px; margin-bottom: 20px; }
-        h1 { color: #4a3b8d; }
-        .info { background: #D2C9ED; padding: 15px; border-radius: 8px; margin: 20px 0; color: #4a3b8d; }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--cream);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+        .card {
+            background: #fff;
+            border-radius: 20px;
+            padding: 52px 48px;
+            max-width: 440px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 8px 40px rgba(26,20,16,0.1);
+        }
+        .checkmark {
+            width: 64px; height: 64px;
+            background: #f4f1fa;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 24px;
+            font-size: 28px;
+        }
+        h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 30px;
+            font-weight: 700;
+            color: var(--ink);
+            margin-bottom: 8px;
+        }
+        .sub {
+            font-size: 14px;
+            color: var(--muted);
+            margin-bottom: 28px;
+        }
+        .info-box {
+            background: var(--cream);
+            border: 1px solid #e5ddd0;
+            border-radius: 10px;
+            padding: 20px 24px;
+            text-align: left;
+            margin-bottom: 28px;
+        }
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13.5px;
+            padding: 6px 0;
+            border-bottom: 1px solid #ede8e0;
+        }
+        .info-row:last-child { border-bottom: none; }
+        .info-row span:first-child { color: var(--muted); }
+        .info-row span:last-child  { font-weight: 500; color: var(--ink); }
         .btn-home {
             display: inline-block;
-            background: #7157C7;
-            color: white;
-            padding: 10px 20px;
+            background: var(--ink);
+            color: #fff;
+            padding: 12px 32px;
+            border-radius: 7px;
             text-decoration: none;
-            border-radius: 5px;
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
         }
     </style>
 </head>
 <body>
-
-<div class="success-card">
-    <div class="checkmark">✔</div>
+<div class="card">
+    <div class="checkmark">✓</div>
     <h1>Broneering kinnitatud!</h1>
-    <p>Ootame teid restorani Puri.</p>
+    <p class="sub">Ootame teid restorani Puri. Kinnitus saadetakse teie e-postile.</p>
 
-    <div class="info">
-        <p th:text="'Valitud laud: nr ' + ${table.tableNumber}"></p>
-        <p th:text="'Kohti: ' + ${table.places}"></p>
-        <p>Aeg: <span th:text="${#temporals.format(dateTime, 'dd.MM.yyyy HH:mm')}"></span></p>
+    <div class="info-box">
+        <div class="info-row">
+            <span>Laud</span>
+            <span th:text="'Nr ' + ${table.tableNumber}"></span>
+        </div>
+        <div class="info-row">
+            <span>Kohti</span>
+            <span th:text="${table.places}"></span>
+        </div>
+        <div class="info-row">
+            <span>Kuupäev</span>
+            <span th:text="${date}"></span>
+        </div>
+        <div class="info-row">
+            <span>Kellaaeg</span>
+            <span th:text="${time}"></span>
+        </div>
+        <div class="info-row">
+            <span>Nimi</span>
+            <span th:text="${customerName}"></span>
+        </div>
     </div>
 
     <a href="/" class="btn-home">Tagasi avalehele</a>
 </div>
-
 </body>
 </html>
