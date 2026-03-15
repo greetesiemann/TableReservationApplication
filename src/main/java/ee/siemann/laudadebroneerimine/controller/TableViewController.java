@@ -35,13 +35,14 @@ public class TableViewController {
     }
 
     /**
-     * This method chooses the best table available
-     * @param peopleCount how many people
-     * @param features do they have any wishes
-     * @param date what day
-     * @param time what time
-     * @param model for building and derlivering data
-     * @return back to opening tab
+     * Searches for available tables based on the given criteria and returns
+     * the floor plan with the best matching table highlighted as recommended.
+     * @param peopleCount number of guests to seat
+     * @param features optional list of preferred table features
+     * @param date requested booking date
+     * @param time requested booking time
+     * @param model Spring MVC model for passing data to the view
+     * @return the index view with all tables and availability information
      */
     @PostMapping("/search")
     public String searchTables(
@@ -91,14 +92,15 @@ public class TableViewController {
     }
 
     /**
-     * This method confirms the booking
-     * @param id
-     * @param date
-     * @param time
-     * @param peopleCount
-     * @param customerName
-     * @param model
-     * @return
+     * Confirms a table booking by saving the reservation to the database
+     * and displaying a confirmation page to the customer.
+     * @param id ID of the selected table
+     * @param date booking date as a string (yyyy-MM-dd)
+     * @param time booking time as a string (HH:mm)
+     * @param peopleCount number of guests
+     * @param customerName full name of the customer making the booking
+     * @param model Spring MVC model for passing data to the view
+     * @return the thanks view with booking confirmation details
      */
     @GetMapping("/book/{id}")
     public String confirmBooking(

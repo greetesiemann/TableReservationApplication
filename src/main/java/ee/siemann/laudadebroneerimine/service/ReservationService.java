@@ -18,26 +18,55 @@ public class ReservationService {
     private final ReservationRepository reservationRepository;
 
     /**
-     * This method finds the tables that are suitable
-     * @param peopleCount how many people there are coming
-     * @param features what kind of preferences they have
-     * @param time what time they want to make the reservation
-     * @return List of suitable tables for the costumer
+     * Finds all tables that are available for the given time and match the
+     * customer's requirements for group size and preferred features.
+     * @param peopleCount minimum number of seats required
+     * @param features optional list of required features
+     * @param time requested start time of the reservation
+     * @return list of tables that fit the group, match the features, and are not already booked
      */
     public List<RestaurantTable> findAvailableTables(int peopleCount, List<String> features, LocalDateTime time) {
-        List<RestaurantTable> suitableTables = tableRepository.findAll().stream()
+        List<RestaurantTable> allFree = tableRepository.findAll().stream()
                 .filter(table -> table.getPlaces() >= peopleCount)
-                .collect(Collectors.toList());
-        return suitableTables.stream()
                 .filter(table -> isTableFree(table, time))
                 .collect(Collectors.toList());
+
+        // try exact feature match
+        if (features != null && !features.isEmpty()) {
+            List<RestaurantTable> strictMatch = allFree.stream()
+                    .filter(table -> table.getFeatures().containsAll(features))
+                    .filter(table -> table.getPlaces() <= peopleCount + 1)
+                    .collect(Collectors.toList());
+
+            if (!strictMatch.isEmpty()) return strictMatch;
+
+            // no exact match — ANY feature match
+            List<RestaurantTable> looseMatch = allFree.stream()
+                    .filter(table -> table.getFeatures().stream().anyMatch(features::contains))
+                    .filter(table -> table.getPlaces() <= peopleCount + 3)
+                    .collect(Collectors.toList());
+
+            if (!looseMatch.isEmpty()) return looseMatch;
+        }
+
+        // no features selected (or all feature searches failed)
+        // prefer tables with exactly peopleCount+1 seats first
+        List<RestaurantTable> exactSize = allFree.stream()
+                .filter(table -> table.getPlaces() <= peopleCount + 1)
+                .collect(Collectors.toList());
+
+        if (!exactSize.isEmpty()) return exactSize;
+
+        // Step 5: fall back to all free tables regardless of size
+        return allFree;
     }
 
     /**
-     * This method checks if a table is free
-     * @param table the table we are looking at
-     * @param time time when the reservation should start
-     * @return true if the table is free, false if not
+     * Checks whether a table has no overlapping reservations for a 2-hour slot
+     * starting at the given time.
+     * @param table the table to check
+     * @param time the requested start time
+     * @return true if the table is free for the full 2-hour duration, false if already booked
      */
     private boolean isTableFree(RestaurantTable table, LocalDateTime time) {
         LocalDateTime requestedEnd = time.plusHours(2); // Let's assume one reservation last for 2 hours

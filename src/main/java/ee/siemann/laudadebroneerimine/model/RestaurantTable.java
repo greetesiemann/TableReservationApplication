@@ -25,9 +25,6 @@ public class RestaurantTable {
     @ElementCollection
     private List<String> features;
 
-    private Integer x;
-    private Integer y;
-
     @Transient
     private boolean isRecommended;
 }

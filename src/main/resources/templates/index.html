@@ -24,7 +24,7 @@
             color: var(--ink);
             min-height: 100vh;
             display: flex;
-            overflow: hidden;
+            overflow-y: auto;
         }
 
         /*SIDEBAR*/
@@ -189,7 +189,7 @@
 
         /* FLOOR PLAN */
         .floor-wrap {
-            display: none; /* shown via JS after search */
+            display: none;
         }
         .floor-wrap.visible { display: block; }
 
@@ -368,6 +368,55 @@
             transition: border-color 0.2s;
         }
         .btn-cancel:hover { border-color: var(--muted); }
+
+        .floor-layout {
+            display: flex;
+            gap: 0;
+            margin-bottom: 0;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .zone {
+            padding: 20px;
+            flex: 1;
+        }
+
+        .zone-label {
+            font-size: 11px;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 16px;
+            font-weight: 600;
+        }
+
+        .indoor-zone {
+            background: #fff;
+            border-right: 2px solid var(--border);
+        }
+
+        .wall-separator {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--ink);
+            color: var(--muted);
+            font-size: 11px;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            padding: 10px;
+            margin: 0;
+        }
+
+        .terrace-zone {
+            background: #f0f7f0;
+            border: 2px solid var(--border);
+            border-top: none;
+            border-radius: 0 0 12px 12px;
+            padding: 20px;
+        }
     </style>
 </head>
 <body>
@@ -381,11 +430,11 @@
 
     <form th:action="@{/search}" method="post" id="searchForm">
         <label class="field-label">Inimeste arv</label>
-        <input type="number" name="peopleCount" min="1" max="10"
+        <input type="number" name="peopleCount" min="1" max="8"
                th:value="${peopleCount}" placeholder="nt 2" required>
 
         <label class="field-label">Kuupäev</label>
-        <input type="date" name="date"
+        <input type="date" name="date" min="2026-03-15"
                th:value="${bookingDate}" required>
 
         <label class="field-label">Kellaaeg</label>
@@ -408,13 +457,13 @@
         <label class="field-label" style="margin-top:20px;">Eelistused</label>
         <div class="features-grid">
             <label class="feat-chip">
-                <input type="checkbox" name="features" value="akna all"
-                       th:checked="${selectedFeatures != null and #lists.contains(selectedFeatures,'akna all')}">
+                <input type="checkbox" name="features" value="Akna all"
+                       th:checked="${selectedFeatures != null and #lists.contains(selectedFeatures,'Akna all')}">
                 <span class="dot"></span> Akna all
             </label>
             <label class="feat-chip">
-                <input type="checkbox" name="features" value="vaikne"
-                       th:checked="${selectedFeatures != null and #lists.contains(selectedFeatures,'vaikne')}">
+                <input type="checkbox" name="features" value="Vaikne ala"
+                       th:checked="${selectedFeatures != null and #lists.contains(selectedFeatures,'Vaikne ala')}">
                 <span class="dot"></span> Vaikne ala
             </label>
             <label class="feat-chip">
@@ -423,8 +472,8 @@
                 <span class="dot"></span> Terass
             </label>
             <label class="feat-chip">
-                <input type="checkbox" name="features" value="vaatega köögile"
-                       th:checked="${selectedFeatures != null and #lists.contains(selectedFeatures,'vaatega köögile')}">
+                <input type="checkbox" name="features" value="Vaatega avatud köögile"
+                       th:checked="${selectedFeatures != null and #lists.contains(selectedFeatures,'Vaatega avatud köögile')}">
                 <span class="dot"></span> Vaatega avatud köögile
             </label>
         </div>
@@ -453,27 +502,68 @@
 
     <!-- Floor plan — shown after search -->
     <div th:if="${tables != null}">
-        <p class="result-meta">
-            Leiti <strong th:text="${tables.size()}">0</strong> lauda —
-            kuldne on meie soovitus.
-        </p>
-        <div class="floor-plan">
-            <div th:each="table : ${tables}"
-                 th:classappend="${table.recommended} ? ' recommended' : (${#lists.contains(availableIds, table.id)} ? '' : ' unavailable')"
-                 class="table-card"
-                 th:attr="data-id=${table.id}"
-                 onclick="openModal(this)">
 
-                <span class="rec-badge" th:if="${table.recommended}">★ Soovitame</span>
+        <!-- No available tables message -->
+        <div th:if="${#sets.isEmpty(availableIds)}" style="
+        background: #fff8f0;
+        border: 1.5px solid #f0e0c8;
+        border-radius: 10px;
+        padding: 18px 24px;
+        margin-bottom: 24px;
+        color: #8c7b6b;
+        font-size: 14px;">
+            ⚠ Valitud ajal ja kriteeriumitele vastavaid vabu laudu ei leitud.
+            Proovi teist kellaaega või kuupäeva.
+        </div>
 
-                <div class="table-num" th:text="'Laud ' + ${table.tableNumber}"></div>
-                <div class="table-seats" th:text="${table.places} + ' kohta'"></div>
+        <div class="floor-layout">
 
-                <div class="table-feats">
-                    <span class="feat-tag" th:each="f : ${table.features}" th:text="${f}"></span>
+            <!-- indoor area -->
+            <div class="zone indoor-zone">
+                <div class="zone-label">🍽 Saal</div>
+                <div class="floor-plan">
+                    <div th:each="table : ${tables}"
+                         th:if="${table.tableNumber <= 5}"
+                         th:classappend="${table.recommended} ? ' recommended' : (${#lists.contains(availableIds, table.id)} ? '' : ' unavailable')"
+                         class="table-card"
+                         th:attr="data-id=${table.id}"
+                         onclick="openModal(this)">
+                        <span class="rec-badge" th:if="${table.recommended}">★ Soovitame</span>
+                        <div class="table-num" th:text="'Laud ' + ${table.tableNumber}"></div>
+                        <div class="table-seats" th:text="${table.places} + ' kohta'"></div>
+                        <div class="table-feats">
+                            <span class="feat-tag" th:each="f : ${table.features}" th:text="${f}"></span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
+
+        <!-- WALL separator -->
+        <div class="wall-separator">
+            <span>— välisuks —</span>
+        </div>
+
+        <!-- TERRACE: outside -->
+        <div class="zone terrace-zone">
+            <div class="zone-label">☀ Terrass</div>
+            <div class="floor-plan">
+                <div th:each="table : ${tables}"
+                     th:if="${table.tableNumber >= 6}"
+                     th:classappend="${table.recommended} ? ' recommended' : (${#lists.contains(availableIds, table.id)} ? '' : ' unavailable')"
+                     class="table-card"
+                     th:attr="data-id=${table.id}"
+                     onclick="openModal(this)">
+                    <span class="rec-badge" th:if="${table.recommended}">★ Soovitame</span>
+                    <div class="table-num" th:text="'Laud ' + ${table.tableNumber}"></div>
+                    <div class="table-seats" th:text="${table.places} + ' kohta'"></div>
+                    <div class="table-feats">
+                        <span class="feat-tag" th:each="f : ${table.features}" th:text="${f}"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 </main>
 
