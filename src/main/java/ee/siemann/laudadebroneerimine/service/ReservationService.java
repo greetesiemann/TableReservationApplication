@@ -57,7 +57,6 @@ public class ReservationService {
 
         if (!exactSize.isEmpty()) return exactSize;
 
-        // Step 5: fall back to all free tables regardless of size
         return allFree;
     }
 
@@ -68,7 +67,7 @@ public class ReservationService {
      * @param time the requested start time
      * @return true if the table is free for the full 2-hour duration, false if already booked
      */
-    private boolean isTableFree(RestaurantTable table, LocalDateTime time) {
+    public boolean isTableFree(RestaurantTable table, LocalDateTime time) {
         LocalDateTime requestedEnd = time.plusHours(2); // Let's assume one reservation last for 2 hours
         return reservationRepository.findByRestaurantTable(table).stream()
                 .noneMatch(res ->

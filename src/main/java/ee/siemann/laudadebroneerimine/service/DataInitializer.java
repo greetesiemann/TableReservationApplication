@@ -18,10 +18,12 @@ public class DataInitializer implements CommandLineRunner {
     private final TableRepository tableRepository;
     private final ReservationRepository reservationRepository;
     private final Random random = new Random();
+    private final ReservationService reservationService;
 
-    public DataInitializer(TableRepository tableRepository, ReservationRepository reservationRepository) {
+    public DataInitializer(TableRepository tableRepository, ReservationRepository reservationRepository, ReservationService reservationService) {
         this.tableRepository = tableRepository;
         this.reservationRepository = reservationRepository;
+        this.reservationService = reservationService;
     }
 
     @Override
@@ -39,19 +41,23 @@ public class DataInitializer implements CommandLineRunner {
         }
         List<RestaurantTable> tables = tableRepository.findAll();
         for (RestaurantTable table : tables) {
-            if (random.nextBoolean()) {
+            int reservationCount = 1 + random.nextInt(3); // 1 to 3 reservations per table
+            for (int i = 0; i < reservationCount; i++) {
                 LocalDate randomDate = LocalDate.now().plusDays(random.nextInt(7)); // next 7 days
                 LocalDateTime startTime = randomDate.atTime(11 + random.nextInt(10), 0); // 11:00–21:00
 
-                Reservation res = Reservation.builder()
-                        .restaurantTable(table)
-                        .startTime(startTime)
-                        .endTime(startTime.plusHours(2))
-                        .personCount(random.nextInt(table.getPlaces()) + 1)
-                        .customerName("Random client")
-                        .build();
+                if (reservationService.isTableFree(table, startTime)) {
+                    Reservation res = Reservation.builder()
+                            .restaurantTable(table)
+                            .startTime(startTime)
+                            .endTime(startTime.plusHours(2))
+                            .personCount(random.nextInt(table.getPlaces()) + 1)
+                            .customerName("Random client")
+                            .build();
 
-                reservationRepository.save(res);
+                    reservationRepository.save(res);
+                }
+
             }
         }
 
