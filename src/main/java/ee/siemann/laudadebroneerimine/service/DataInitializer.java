@@ -33,10 +33,13 @@ public class DataInitializer implements CommandLineRunner {
             tableRepository.save(new RestaurantTable(null, 2, 4, List.of("Akna all"), false));
             tableRepository.save(new RestaurantTable(null, 3, 2, List.of("Vaatega avatud köögile"), false));
             tableRepository.save(new RestaurantTable(null, 4, 6, List.of("Vaikne ala"), false));
-            tableRepository.save(new RestaurantTable(null, 5, 4, List.of("Vaatega avatud köögile"), false));
-            tableRepository.save(new RestaurantTable(null, 6, 8, List.of("Terass"), false));
-            tableRepository.save(new RestaurantTable(null, 7, 4, List.of("Terass"), false));
-            tableRepository.save(new RestaurantTable(null, 8, 2, List.of("Terass"), false));
+            tableRepository.save(new RestaurantTable(null, 5, 8, List.of("Akna all", "Vaatega avatud köögile"), false));
+            tableRepository.save(new RestaurantTable(null, 6, 4, List.of("Vaikne ala", "Vaatega avatud köögile"), false));
+            tableRepository.save(new RestaurantTable(null, 7, 2, List.of(), false));
+            tableRepository.save(new RestaurantTable(null, 8, 8, List.of("Terass"), false));
+            tableRepository.save(new RestaurantTable(null, 9, 4, List.of("Terass"), false));
+            tableRepository.save(new RestaurantTable(null, 10, 2, List.of("Terass"), false));
+            tableRepository.save(new RestaurantTable(null, 11, 4, List.of("Terass"), false));
             System.out.println("Tables are added");
         }
         List<RestaurantTable> tables = tableRepository.findAll();

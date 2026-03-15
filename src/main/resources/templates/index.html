@@ -5,6 +5,7 @@
     <title>Restoran Puri – Laua broneerimine</title>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
     <style>
+        /* from Claude ai */
         :root {
             --ink:    #1a1410;
             --gold:   #c9a84c;
@@ -523,7 +524,7 @@
                 <div class="zone-label">🍽 Saal</div>
                 <div class="floor-plan">
                     <div th:each="table : ${tables}"
-                         th:if="${table.tableNumber <= 5}"
+                         th:if="${table.tableNumber <= 7}"
                          th:classappend="${table.recommended} ? ' recommended' : (${#lists.contains(availableIds, table.id)} ? '' : ' unavailable')"
                          class="table-card"
                          th:attr="data-id=${table.id}"
@@ -549,7 +550,7 @@
             <div class="zone-label">☀ Terrass</div>
             <div class="floor-plan">
                 <div th:each="table : ${tables}"
-                     th:if="${table.tableNumber >= 6}"
+                     th:if="${table.tableNumber >= 8}"
                      th:classappend="${table.recommended} ? ' recommended' : (${#lists.contains(availableIds, table.id)} ? '' : ' unavailable')"
                      class="table-card"
                      th:attr="data-id=${table.id}"
@@ -593,6 +594,7 @@
 </div>
 
 <script>
+    // from Claude ai
     function openModal(card) {
         const id = card.getAttribute('data-id');
         const tableName = card.querySelector('.table-num').textContent;
