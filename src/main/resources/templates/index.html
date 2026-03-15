@@ -434,7 +434,7 @@
                th:value="${peopleCount}" placeholder="nt 2" required>
 
         <label class="field-label">Kuupäev</label>
-        <input type="date" name="date" min="2026-03-15"
+        <input type="date" name="date" id="date"
                th:value="${bookingDate}" required>
 
         <label class="field-label">Kellaaeg</label>
@@ -610,10 +610,14 @@
         document.getElementById('modalBackdrop').classList.remove('open');
     }
 
-    // close on backdrop click
     document.getElementById('modalBackdrop').addEventListener('click', function(e) {
         if (e.target === this) closeModal();
     });
+
+    // adapted from https://www.geeksforgeeks.org/
+    const dp = document.getElementById('date');
+    const today = new Date().toISOString().split('T')[0];
+    dp.setAttribute('min', today);
 </script>
 
 </body>
