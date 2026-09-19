@@ -51,4 +51,4 @@ For guidance and support throughout the project, I used Claude AI, which also as
 with the HTML styling. JavaScript solutions were adapted from GeeksforGeeks and Claude AI.
 
 ## Author
-Greete Siemann, CGI Internship 2026
+Greete Siemann
